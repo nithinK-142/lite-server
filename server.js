@@ -62,6 +62,26 @@ app.post("/api", (req, res) => {
   }
 });
 
+app.delete("/api", (req, res) => {
+  const { id } = req.query;
+  res.set("content-type", "application/json");
+
+  const sql = "DELETE FROM animelist WHERE anime_id=?";
+  try {
+    liteDB.run(sql, [id], function (err) {
+      if (err) throw err;
+      if (this.changes === 1) {
+        return res.status(200).json({ message: "anime deleted" });
+      } else {
+        return res.status(200).json({ message: "anime not found" });
+      }
+    });
+  } catch (err) {
+    console.log("Error deleting anime :", err.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.listen(8000, () => {
   console.log("Server is Up and Running...");
 });
