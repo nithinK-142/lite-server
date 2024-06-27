@@ -1,22 +1,17 @@
 import express from "express";
 import { liteDB } from "./connect.js";
+import { SQL_SELECT, SQL_INSERT, SQL_DELETE } from "./queries.js";
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/", (_req, res) => {
-  return res.status(200).send("AnimeList API");
-});
+app.get("/", (_req, res) => res.status(200).send("AnimeList API"));
 
 app.get("/api", (_req, res) => {
-  res.set("content-type", "application/json");
-
-  const sql = "SELECT * FROM animelist";
   let data = { animelist: [] };
-
   try {
-    liteDB.all(sql, [], function (err, rows) {
+    liteDB.all(SQL_SELECT, [], function (err, rows) {
       if (err) {
         throw err;
       }
@@ -39,16 +34,10 @@ app.get("/api", (_req, res) => {
 });
 
 app.post("/api", (req, res) => {
-  res.set("content-type", "application/json");
-
-  const sql =
-    "INSERT INTO animelist(anime_name, anime_description, isfavorite) VALUES(?, ?, ?)";
-
+  const { anime_name, anime_description, isfavorite } = req.body;
   try {
-    const { anime_name, anime_description, isfavorite } = req.body;
-
     liteDB.run(
-      sql,
+      SQL_INSERT,
       [anime_name, anime_description, isfavorite],
       function (err) {
         if (err) throw err;
@@ -64,11 +53,8 @@ app.post("/api", (req, res) => {
 
 app.delete("/api", (req, res) => {
   const { id } = req.query;
-  res.set("content-type", "application/json");
-
-  const sql = "DELETE FROM animelist WHERE anime_id=?";
   try {
-    liteDB.run(sql, [id], function (err) {
+    liteDB.run(SQL_DELETE, [id], function (err) {
       if (err) throw err;
       if (this.changes === 1) {
         return res.status(200).json({ message: "anime deleted" });
@@ -82,6 +68,4 @@ app.delete("/api", (req, res) => {
   }
 });
 
-app.listen(8000, () => {
-  console.log("Server is Up and Running...");
-});
+app.listen(8000, () => console.log("Server is Up and Running..."));

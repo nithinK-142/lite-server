@@ -1,4 +1,5 @@
 import sqlite3 from "sqlite3";
+import { SQL_CREATE_TABLE } from "./queries.js";
 
 const sql3 = sqlite3.verbose();
 
@@ -16,13 +17,7 @@ function connected(err) {
   console.log("Created the DB or it already exists!");
 }
 
-const sql = `CREATE TABLE IF NOT EXISTS animelist (
-    anime_id INTEGER PRIMARY KEY,
-    anime_name TEXT NOT NULL,
-    anime_description TEXT NOT NULL,
-    isfavorite BOOLEAN NOT NULL DEFAULT FALSE)`;
-
-liteDB.run(sql, [], (err) => {
+liteDB.run(SQL_CREATE_TABLE, [], (err) => {
   if (err) {
     console.log("error creating animelist table ", err.message);
     return;
