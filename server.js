@@ -38,6 +38,30 @@ app.get("/api", (_req, res) => {
   }
 });
 
+app.post("/api", (req, res) => {
+  res.set("content-type", "application/json");
+
+  const sql =
+    "INSERT INTO animelist(anime_name, anime_description, isfavorite) VALUES(?, ?, ?)";
+
+  try {
+    const { anime_name, anime_description, isfavorite } = req.body;
+
+    liteDB.run(
+      sql,
+      [anime_name, anime_description, isfavorite],
+      function (err) {
+        if (err) throw err;
+        console.log(this.lastID);
+        return res.status(200).json({ message: "anime inserted" });
+      }
+    );
+  } catch (err) {
+    console.log("Error inserting anime :", err.message);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.listen(8000, () => {
   console.log("Server is Up and Running...");
 });
