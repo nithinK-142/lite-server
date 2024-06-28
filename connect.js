@@ -1,28 +1,21 @@
-import sqlite3 from "sqlite3";
+import { createClient } from "@libsql/client";
 import { SQL_CREATE_TABLE } from "./queries.js";
 
-const sql3 = sqlite3.verbose();
-
-const liteDB = new sql3.Database(
-  "./litedb.db",
-  sqlite3.OPEN_READWRITE,
-  connected
-);
-
-function connected(err) {
-  if (err) {
-    console.log("error connecting to db", err.message);
-    return;
-  }
-  console.log("Created the DB or it already exists!");
-}
-
-liteDB.run(SQL_CREATE_TABLE, [], (err) => {
-  if (err) {
-    console.log("error creating animelist table ", err.message);
-    return;
-  }
-  console.log("Table created.");
+const client = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
-export { liteDB };
+// Function to create the table if it doesn't exist
+async function createTableIfNotExists() {
+  try {
+    await client.execute(SQL_CREATE_TABLE);
+    console.log("Table 'animelist' is ready");
+  } catch (err) {
+    console.error("Error creating table:", err);
+  }
+}
+
+createTableIfNotExists();
+
+export const db = client;

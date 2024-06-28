@@ -2,7 +2,7 @@ export const SQL_CREATE_TABLE = `CREATE TABLE IF NOT EXISTS animelist (
     anime_id INTEGER PRIMARY KEY,
     anime_name TEXT NOT NULL,
     anime_description TEXT NOT NULL,
-    isfavorite BOOLEAN NOT NULL DEFAULT FALSE)`;
+    isfavorite INTEGER NOT NULL DEFAULT 0)`;
 
 export const SQL_SELECT = "SELECT * FROM animelist";
 

@@ -1,4 +1,5 @@
 import express from "express";
+import "dotenv/config";
 import { AnimelistRouter } from "./routes.js";
 
 const app = express();
